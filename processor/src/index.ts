@@ -1,10 +1,17 @@
 import { PrismaClient } from "@prisma/client";
 import {Kafka} from "kafkajs";
+import { Pool } from "pg";
+import { PrismaPg } from "@prisma/adapter-pg";
 import "dotenv/config";
 
 const TOPIC_NAME = "zap-events"
 
-const client = new PrismaClient();
+const connectionString = `${process.env.DATABASE_URL}`;
+
+const pool = new Pool({ connectionString });
+const adapter = new PrismaPg(pool);
+
+const client = new PrismaClient({ adapter });
 
 const kafka = new Kafka({
     clientId: 'outbox-processor',

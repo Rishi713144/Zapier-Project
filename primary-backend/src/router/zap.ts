@@ -3,6 +3,7 @@ import { Router } from "express";
 import { authMiddleware } from "../middleware";
 import { ZapCreateSchema } from "../types";
 import { prismaClient } from "../db";
+import { Prisma } from "@prisma/client";
 
 const router = Router();
 
@@ -18,8 +19,8 @@ router.post("/", authMiddleware, async (req, res) => {
         });
     }   
 
-    const zapId = await prismaClient.$transaction(async tx => {
-        const zap = await prismaClient.zap.create({
+    const zapId = await prismaClient.$transaction(async (tx: Prisma.TransactionClient) => {
+        const zap = await tx.zap.create({
             data: {
                 userId: parseInt(id),
                 triggerId: "",
